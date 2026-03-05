@@ -76,6 +76,29 @@
             <artifactId>uuid-creator</artifactId>
             <version>5.3.3</version>
         </dependency>
+
+        <!-- Apache Commons Text - Para escaping y validación -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.12.0</version>
+        </dependency>
+
+        <!-- Apache Commons Validator - Para validar URLs, emails, etc. -->
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.10.1</version>
+        </dependency>
+
+
+        <!-- OWASP Java HTML Sanitizer - Para limpiar HTML de forma segura -->
+        <!-- ⭐ IMPORTANTE: Usa esto en lugar de regex manual -->
+        <dependency>
+            <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+            <artifactId>owasp-java-html-sanitizer</artifactId>
+            <version>20220608.1</version>
+        </dependency>
         
         <!-- Test Dependencies -->
         <dependency>
