@@ -112,6 +112,21 @@ public class CreateUserRequest {
     @Size(max = 100, message = "Email must not exceed 100 characters")
     private String email;
 
+
+    /*
+        User password
+
+        Just verify if the password is present and nothing more
+
+        password is in the dto but isn't in the entity
+
+
+
+     */
+
+    @NotBlank(message= "Password is required")
+    private String password;
+
     /**
      * Whether user is an administrator.
      *

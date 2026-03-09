@@ -2,8 +2,8 @@ package com.app.userservice.client;
 
 import com.app.userservice.dto.AuthCredentialsRequest;
 import com.app.userservice.exception.AuthServiceException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +15,14 @@ import org.springframework.web.client.RestTemplate;
 import java.util.UUID;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class AuthServiceClient {
 
     private final RestTemplate restTemplate;
+
+    public AuthServiceClient(RestTemplate restTemplate){
+        this.restTemplate = restTemplate;
+    }
 
     @Value("${auth.service.url}")
     private String authServiceUrl;
