@@ -31,6 +31,11 @@ public class UserProfile implements Serializable {
      * User's phone number
      */
     private String phone;
+
+    /**
+     * User's educative institution name (if is necessary)
+     */
+    private String educativeInstitution;
     
     /**
      * User configuration settings

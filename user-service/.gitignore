@@ -36,7 +36,6 @@ logs/
 
 # Spring Boot
 application.properties
-application-docker.properties
 application-prod.properties
 
 # SQL
