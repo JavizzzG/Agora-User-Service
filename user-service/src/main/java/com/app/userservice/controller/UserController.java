@@ -103,8 +103,8 @@ public class UserController {
      * @param email the email to check
      * @return true if exists, false otherwise
      */
-    @GetMapping("/exists")
-    public ResponseEntity<Boolean> existsByEmail(@RequestParam String email) {
+    @GetMapping("/exists/{email}")
+    public ResponseEntity<Boolean> existsByEmail(@PathVariable String email) {
         boolean exists = userService.existsByEmail(email);
         return ResponseEntity.ok(exists);
     }
