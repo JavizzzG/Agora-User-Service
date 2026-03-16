@@ -156,13 +156,17 @@ public class DataSanitizer {
         }
 
         String sanitized = phone.trim();
-
-        // Keep only + (if at start) and digits
-        if (sanitized.startsWith("+")) {
-            sanitized = "+" + sanitized.substring(1).replaceAll("[^0-9]", "");
-        } else {
-            sanitized = sanitized.replaceAll("[^0-9]", "");
+        String[] array = sanitized.split("[-\\s]", 2);
+        
+        // Handle case where no space/hyphen found
+        if (array.length == 1) {
+            return sanitized; // Return as-is if no separator
         }
+        
+        String countryCode = array[0].replaceAll("[^0-9]", "");
+        String number = array[1].replaceAll("[^0-9]", "");
+
+        sanitized = "+" + countryCode + "-" + number;
 
         return sanitized;
     }

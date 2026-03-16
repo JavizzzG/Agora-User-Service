@@ -1,5 +1,6 @@
 package com.app.userservice.model;
 
+import com.app.userservice.validation.ValidPhone;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class UserProfile implements Serializable {
      * URL of the user's avatar image
      */
     private String avatarUrl;
-    
+
     /**
      * User's biography or description
      */
@@ -30,6 +31,7 @@ public class UserProfile implements Serializable {
     /**
      * User's phone number
      */
+    @ValidPhone
     private String phone;
 
     /**

@@ -64,11 +64,6 @@ public class ValidUserProfileValidator implements ConstraintValidator<ValidUserP
             isValid &= validateBio(profile.getBio(), context);
         }
 
-        // Validate phone if present
-        if (profile.getPhone() != null && !profile.getPhone().isEmpty()) {
-            isValid &= validatePhone(profile.getPhone(), context);
-        }
-
         // Validate config if present
         if (profile.getConfig() != null) {
             isValid &= validateConfig(profile.getConfig(), context);
@@ -156,38 +151,6 @@ public class ValidUserProfileValidator implements ConstraintValidator<ValidUserP
                             "Bio contains potentially dangerous content"
                     )
                     .addPropertyNode("bio")
-                    .addConstraintViolation();
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Validate phone number.
-     * Note: After sanitization, phone should be in E.164 format.
-     */
-    private boolean validatePhone(String phone, ConstraintValidatorContext context) {
-        // After sanitization, should be: +[country][number]
-        // Example: +573001234567
-
-        // Must start with +
-        if (!phone.startsWith("+")) {
-            context.buildConstraintViolationWithTemplate(
-                            "Phone number must be in international format (e.g., +573001234567)"
-                    )
-                    .addPropertyNode("phone")
-                    .addConstraintViolation();
-            return false;
-        }
-
-        // Check if rest is all digits
-        String digits = phone.substring(1);
-        if (!digits.matches("\\d{7,15}")) {
-            context.buildConstraintViolationWithTemplate(
-                            "Phone number must be 8-16 characters (+ followed by 7-15 digits)"
-                    )
-                    .addPropertyNode("phone")
                     .addConstraintViolation();
             return false;
         }
