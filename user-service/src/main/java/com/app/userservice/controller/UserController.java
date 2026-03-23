@@ -1,5 +1,6 @@
 package com.app.userservice.controller;
 
+import com.app.userservice.dto.AuthenticateCredentialsResponse;
 import com.app.userservice.dto.CreateUserRequest;
 import com.app.userservice.dto.UpdateUserRequest;
 import com.app.userservice.dto.UserResponse;

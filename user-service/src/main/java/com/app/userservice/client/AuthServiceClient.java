@@ -3,7 +3,7 @@ package com.app.userservice.client;
 import com.app.userservice.dto.AuthCredentialsRequest;
 import com.app.userservice.exception.AuthServiceException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,8 @@ public class AuthServiceClient {
 
     private final RestTemplate restTemplate;
 
-    public AuthServiceClient(RestTemplate restTemplate){
+    // Inyectar el RestTemplate específico para auth-service
+    public AuthServiceClient(@Qualifier("authServiceRestTemplate") RestTemplate restTemplate){
         this.restTemplate = restTemplate;
     }
 
