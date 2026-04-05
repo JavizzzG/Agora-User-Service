@@ -25,7 +25,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: user-service-app
+    container_name: user-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
       DB_HOST: ${DB_HOST}

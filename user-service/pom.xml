@@ -84,7 +84,7 @@
             <version>1.12.0</version>
         </dependency>
 
-        <!-- Apache Commons Validator - Para validar URLs, emails, etc. -->
+        <!-- Apache Commons Validator - Para validar URL, emails, etc. -->
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
