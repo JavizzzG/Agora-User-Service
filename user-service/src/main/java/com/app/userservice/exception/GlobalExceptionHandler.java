@@ -79,6 +79,21 @@ public class GlobalExceptionHandler {
         
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler(AuthServiceException.class)
+    public ResponseEntity<ErrorResponse> handleAuthServiceException(
+            AuthServiceException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse error = ErrorResponse.of(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
     
     /**
      * Handle any other unexpected exceptions

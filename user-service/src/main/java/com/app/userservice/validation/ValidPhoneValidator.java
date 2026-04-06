@@ -36,8 +36,6 @@ public class ValidPhoneValidator implements ConstraintValidator<ValidPhone, Stri
     // E.164 format: +[country code 1-3 digits][number up to 15 digits total]
     // Min: +1234567 (8 chars: + plus 7 digits)
     // Max: +123456789012345 (16 chars: + plus 15 digits)
-    private static final int MIN_LENGTH = 8;
-    private static final int MAX_LENGTH = 16;
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
@@ -46,28 +44,6 @@ public class ValidPhoneValidator implements ConstraintValidator<ValidPhone, Stri
             return true;
         }
 
-        // Must start with +
-        if (!value.startsWith("+")) {
-            return false;
-        }
-
-        // Check length
-        if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
-            return false;
-        }
-
-        // After the +, should only have digits
-        String digitsOnly = value.substring(1);
-        if (!digitsOnly.matches("\\d+")) {
-            return false;
-        }
-
-        // Country code validation (1-3 digits)
-        // First digit can't be 0
-        if (digitsOnly.startsWith("0")) {
-            return false;
-        }
-
-        return true;
+        return value.matches("^\\+\\d{1,3}[-\\s]\\d{4,12}$");
     }
 }

@@ -1,5 +1,6 @@
 package com.app.userservice.controller;
 
+import com.app.userservice.dto.AuthenticateCredentialsResponse;
 import com.app.userservice.dto.CreateUserRequest;
 import com.app.userservice.dto.UpdateUserRequest;
 import com.app.userservice.dto.UserResponse;
@@ -18,7 +19,7 @@ import java.util.UUID;
  * Provides CRUD operations for users.
  */
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
     
@@ -30,7 +31,7 @@ public class UserController {
      * @param request the user creation request
      * @return the created user with 201 status
      */
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
     }
@@ -40,7 +41,7 @@ public class UserController {
      * GET /api/users
      * @return list of all users
      */
-    @GetMapping
+    @GetMapping("/get-all")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<UserResponse> users = userService.getAllUsers();
         return ResponseEntity.status(HttpStatus.OK).body(users);
@@ -52,7 +53,7 @@ public class UserController {
      * @param id the user ID
      * @return the user details
      */
-    @GetMapping("/{id}")
+    @GetMapping("/get-user/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
         UserResponse response = userService.getUserById(id);
         return ResponseEntity.ok(response);
@@ -77,7 +78,7 @@ public class UserController {
      * @param request the update request
      * @return the updated user
      */
-    @PutMapping("/{id}")
+    @PutMapping("/update-user/{id}")
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateUserRequest request) {
@@ -91,7 +92,7 @@ public class UserController {
      * @param id the user ID to delete
      * @return 204 No Content on success
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete-user/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();

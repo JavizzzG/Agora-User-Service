@@ -59,7 +59,7 @@ public class CreateUserRequest {
     @NotBlank(message = "First name is required")
     @Size(max = 30, message = "First name must be less than 30 characters")
     @NoSpecialCharacters(
-            allowSpaces = false,     // First name shouldn't have spaces
+            allowSpaces = true,     // First nama
             allowHyphens = true,      // Allow "Jean-Pierre"
             allowApostrophes = true,  // Allow "O'Brien"
             allowAccents = true,      // Allow "José"
