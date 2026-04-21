@@ -1,8 +1,6 @@
 package com.app.userservice.service;
 
 import com.app.userservice.client.AuthServiceClient;
-import com.app.userservice.client.AuthenticateService;
-import com.app.userservice.dto.AuthenticateCredentialsResponse;
 import com.app.userservice.dto.CreateUserRequest;
 import com.app.userservice.dto.UpdateUserRequest;
 import com.app.userservice.dto.UserResponse;
@@ -15,8 +13,6 @@ import com.app.userservice.repository.UserRepository;
 import com.app.userservice.util.DataSanitizer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,9 +58,6 @@ public class UserService {
         // Convert DTO to entity and save
         User user = userMapper.toEntity(request);
         User savedUser = userRepository.save(user);
-
-        //Get user id
-        UUID userId = savedUser.getId();
 
         //Call auth service
         authServiceClient.registerCredentials(savedUser.getId(), savedUser.getEmail(), password, "password");

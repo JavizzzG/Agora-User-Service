@@ -80,19 +80,34 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(NonRetryableAuthServiceException.class)
+    public ResponseEntity<ErrorResponse> handleNonRetryableAuthServiceException(
+            NonRetryableAuthServiceException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse error = ErrorResponse.of(
+                HttpStatus.BAD_GATEWAY.value(),
+                "Bad Gateway",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(error);
+    }
+
     @ExceptionHandler(AuthServiceException.class)
     public ResponseEntity<ErrorResponse> handleAuthServiceException(
             AuthServiceException ex,
             HttpServletRequest request) {
 
         ErrorResponse error = ErrorResponse.of(
-                HttpStatus.UNAUTHORIZED.value(),
-                "Unauthorized",
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                "Service Unavailable",
                 ex.getMessage(),
                 request.getRequestURI()
         );
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
     }
     
     /**

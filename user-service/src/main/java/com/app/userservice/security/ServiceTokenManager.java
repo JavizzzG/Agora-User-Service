@@ -114,38 +114,32 @@ public class ServiceTokenManager {
      *
      * THREAD-SAFE: Usa ReadLock (múltiples threads pueden leer simultáneamente)
      *
-     * @return Token JWT o null si no disponible
+     * @return Token JWT válido
      */
     public String getToken() {
-        lock.readLock().lock();  // ← Adquirir lock de lectura
+        boolean shouldRefresh;
+
+        lock.readLock().lock();
         try {
-            // Verificar si el token está próximo a expirar
-            if (currentToken != null && tokenExpiresAt != null) {
-
-                Instant now = Instant.now();
-
-                // Si expira en menos de 5 minutos, renovar proactivamente
-                if (tokenExpiresAt.isBefore(now.plusSeconds(5 * 60))) {
-                    log.warn("Token is about to expire, triggering refresh");
-
-                    // Liberar read lock antes de hacer refresh
-                    lock.readLock().unlock();
-
-                    try {
-                        refreshToken();  // Esto usa write lock
-                    } catch (Exception e) {
-                        log.error("Failed to refresh expiring token", e);
-                    }
-
-                    // Re-adquirir read lock para retornar valor
-                    lock.readLock().lock();
-                }
-            }
-
-            return currentToken;
+            shouldRefresh = currentToken == null || tokenExpiresAt == null || tokenExpiresAt.isBefore(Instant.now().plusSeconds(5 * 60));
 
         } finally {
-            lock.readLock().unlock();  // ← SIEMPRE liberar lock
+            lock.readLock().unlock();
+        }
+
+        if (shouldRefresh) {
+            log.warn("Service token is missing or close to expiration, refreshing now");
+            refreshToken();
+        }
+
+        lock.readLock().lock();
+        try {
+            if (currentToken == null || currentToken.isBlank()) {
+                throw new AuthServiceException("Service token is not available");
+            }
+            return currentToken;
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
@@ -194,7 +188,7 @@ public class ServiceTokenManager {
     private int parseExpiresIn(String expiresIn) {
         try {
             return Integer.parseInt(expiresIn);
-        } catch (NumberFormatException e) {
+        } catch (RuntimeException e) {
             log.warn("Failed to parse expires_in: '{}', using default 3600", expiresIn);
             return 3600;  // Default: 1 hora
         }
