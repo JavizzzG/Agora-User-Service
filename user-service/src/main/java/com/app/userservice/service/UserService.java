@@ -99,20 +99,6 @@ public class UserService {
     }
     
     /**
-     * Get all users
-     * @return list of all users
-     */
-    @Transactional(readOnly = true)
-    public List<UserResponse> getAllUsers() {
-        log.info("Fetching all users");
-        
-        return userRepository.findAll()
-                .stream()
-                .map(userMapper::toResponse)
-                .collect(Collectors.toList());
-    }
-    
-    /**
      * Update an existing user
      * @param userId the user ID to update
      * @param request the update request
