@@ -44,3 +44,6 @@ init.sql
 # ENVIRONMENT VARIABLES
 .env
 
+#Docs
+SERVICE_REVIEW.md
+
