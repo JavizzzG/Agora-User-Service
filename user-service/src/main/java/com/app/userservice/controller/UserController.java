@@ -37,24 +37,13 @@ public class UserController {
     }
     
     /**
-     * Get all users
-     * GET /api/users
-     * @return list of all users
-     */
-    @GetMapping("/get-all")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        List<UserResponse> users = userService.getAllUsers();
-        return ResponseEntity.status(HttpStatus.OK).body(users);
-    }
-    
-    /**
      * Get a user by ID
      * GET /api/users/{id}
      * @param id the user ID
      * @return the user details
      */
-    @GetMapping("/get-user/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
+    @GetMapping("/get-user")
+    public ResponseEntity<UserResponse> getUserById(@RequestHeader("X-User-Id") UUID id) {
         UserResponse response = userService.getUserById(id);
         return ResponseEntity.ok(response);
     }
@@ -78,9 +67,9 @@ public class UserController {
      * @param request the update request
      * @return the updated user
      */
-    @PutMapping("/update-user/{id}")
+    @PutMapping("/update-user")
     public ResponseEntity<UserResponse> updateUser(
-            @PathVariable UUID id,
+            @RequestHeader("X-User-Id") UUID id,
             @Valid @RequestBody UpdateUserRequest request) {
         UserResponse response = userService.updateUser(id, request);
         return ResponseEntity.ok(response);
@@ -92,8 +81,8 @@ public class UserController {
      * @param id the user ID to delete
      * @return 204 No Content on success
      */
-    @DeleteMapping("/delete-user/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+    @DeleteMapping("/delete-user")
+    public ResponseEntity<Void> deleteUser(@RequestHeader("X-User-Id") UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
