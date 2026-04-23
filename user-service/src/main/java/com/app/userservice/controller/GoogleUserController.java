@@ -1,6 +1,7 @@
 package com.app.userservice.controller;
 
 import com.app.userservice.dto.GoogleCreateUserRequest;
+import com.app.userservice.dto.GoogleCreateUserResponse;
 import com.app.userservice.service.GoogleUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ public class GoogleUserController {
     private final GoogleUserService googleUserService;
 
     @PostMapping("/register/google")
-    public ResponseEntity<UUID> registerGoogleUser(@Valid @RequestBody GoogleCreateUserRequest request) {
-        UUID createdUserId = googleUserService.createGoogleUser(request);
+    public ResponseEntity<GoogleCreateUserResponse> registerGoogleUser(@Valid @RequestBody GoogleCreateUserRequest request) {
+        GoogleCreateUserResponse createdUserId = googleUserService.createGoogleUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserId);
     }
 }
