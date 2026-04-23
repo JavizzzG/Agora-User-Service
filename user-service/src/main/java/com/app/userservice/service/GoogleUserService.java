@@ -1,6 +1,7 @@
 package com.app.userservice.service;
 
 import com.app.userservice.dto.GoogleCreateUserRequest;
+import com.app.userservice.dto.GoogleCreateUserResponse;
 import com.app.userservice.exception.DuplicateEmailException;
 import com.app.userservice.model.User;
 import com.app.userservice.model.UserProfile;
@@ -22,7 +23,7 @@ public class GoogleUserService {
     private final DataSanitizer dataSanitizer;
 
     @Transactional
-    public UUID createGoogleUser(GoogleCreateUserRequest request) {
+    public GoogleCreateUserResponse createGoogleUser(GoogleCreateUserRequest request) {
         log.info("Creating Google user with email: {}", request.getEmail());
 
         sanitizeRequest(request);
@@ -44,7 +45,7 @@ public class GoogleUserService {
 
         User savedUser = userRepository.save(user);
         log.info("Successfully created Google user with id: {}", savedUser.getId());
-        return savedUser.getId();
+        return new GoogleCreateUserResponse(savedUser.getId());
     }
 
     private void sanitizeRequest(GoogleCreateUserRequest request) {

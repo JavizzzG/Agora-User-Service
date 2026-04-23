@@ -1,6 +1,7 @@
 package com.app.userservice.controller;
 
 import com.app.userservice.dto.GoogleCreateUserRequest;
+import com.app.userservice.dto.GoogleCreateUserResponse;
 import com.app.userservice.service.GoogleUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +35,7 @@ class GoogleUserControllerTest {
     @Test
     @DisplayName("Should register Google user and return created UUID")
     void registerGoogleUser_Returns201_WithUuid() throws Exception {
-        UUID createdId = UUID.randomUUID();
+        GoogleCreateUserResponse createdId = new GoogleCreateUserResponse(UUID.randomUUID());
         GoogleCreateUserRequest request = GoogleCreateUserRequest.builder()
                 .firstName("John")
                 .lastName("Doe")

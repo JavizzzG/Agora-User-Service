@@ -1,6 +1,7 @@
 package com.app.userservice.service;
 
 import com.app.userservice.dto.GoogleCreateUserRequest;
+import com.app.userservice.dto.GoogleCreateUserResponse;
 import com.app.userservice.exception.DuplicateEmailException;
 import com.app.userservice.model.User;
 import com.app.userservice.repository.UserRepository;
@@ -54,9 +55,9 @@ class GoogleUserServiceTest {
     @Test
     @DisplayName("Should create Google user and return UUID")
     void createGoogleUser_ReturnsUuid_WhenEmailIsUnique() {
-        UUID userId = UUID.randomUUID();
+        GoogleCreateUserResponse userId = new GoogleCreateUserResponse(UUID.randomUUID());
         User savedUser = User.builder()
-                .id(userId)
+                .id(userId.getId())
                 .firstName("John")
                 .lastName("Doe")
                 .email("john.doe@gmail.com")
@@ -65,7 +66,7 @@ class GoogleUserServiceTest {
         when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-        UUID result = googleUserService.createGoogleUser(request);
+        GoogleCreateUserResponse result = googleUserService.createGoogleUser(request);
 
         assertThat(result).isEqualTo(userId);
 
