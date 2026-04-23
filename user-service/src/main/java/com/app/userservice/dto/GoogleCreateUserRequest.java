@@ -47,6 +47,5 @@ public class GoogleCreateUserRequest {
     private String email;
 
     @JsonProperty("picture")
-    @NotBlank(message = "Picture is required")
     private String avatarUrl;
 }
