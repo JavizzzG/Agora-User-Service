@@ -30,6 +30,8 @@ public class ValidUserProfileValidator implements ConstraintValidator<ValidUserP
 
     // Allowed theme values
     private static final List<String> ALLOWED_THEMES = Arrays.asList("light", "dark", "auto");
+    private static final List<String> ALLOWED_RETRO_STYLES = Arrays.asList("brief", "detailed", "full");
+    private static final List<String> ALLOWED_EXIGENCY_LEVELS = Arrays.asList("flexible", "moderated", "strict");
 
     // Business rules
     private static final int MAX_BIO_LENGTH = 500;
@@ -162,6 +164,8 @@ public class ValidUserProfileValidator implements ConstraintValidator<ValidUserP
      * Validate config object.
      */
     private boolean validateConfig(UserProfile.UserConfig config, ConstraintValidatorContext context) {
+        boolean isValid = true;
+
         // Validate theme if present
         if (config.getTheme() != null && !config.getTheme().isEmpty()) {
             String theme = config.getTheme().toLowerCase();
@@ -172,10 +176,36 @@ public class ValidUserProfileValidator implements ConstraintValidator<ValidUserP
                         )
                         .addPropertyNode("config.theme")
                         .addConstraintViolation();
-                return false;
+                isValid = false;
             }
         }
 
-        return true;
+        if (config.getRetroStyle() != null && !config.getRetroStyle().isEmpty()) {
+            String retroStyle = config.getRetroStyle().toLowerCase();
+
+            if (!ALLOWED_RETRO_STYLES.contains(retroStyle)) {
+                context.buildConstraintViolationWithTemplate(
+                                "Retro style must be one of: " + String.join(", ", ALLOWED_RETRO_STYLES)
+                        )
+                        .addPropertyNode("config.retroStyle")
+                        .addConstraintViolation();
+                isValid = false;
+            }
+        }
+
+        if (config.getExigencyLevel() != null && !config.getExigencyLevel().isEmpty()) {
+            String exigencyLevel = config.getExigencyLevel().toLowerCase();
+
+            if (!ALLOWED_EXIGENCY_LEVELS.contains(exigencyLevel)) {
+                context.buildConstraintViolationWithTemplate(
+                                "Exigency level must be one of: " + String.join(", ", ALLOWED_EXIGENCY_LEVELS)
+                        )
+                        .addPropertyNode("config.exigencyLevel")
+                        .addConstraintViolation();
+                isValid = false;
+            }
+        }
+
+        return isValid;
     }
 }

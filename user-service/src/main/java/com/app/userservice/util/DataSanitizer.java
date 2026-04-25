@@ -404,6 +404,38 @@ public class DataSanitizer {
     }
 
     /**
+     * Sanitize AI feedback style.
+     */
+    public String sanitizeRetroStyle(String retroStyle) {
+        if (retroStyle == null || retroStyle.isEmpty()) {
+            return "detailed"; // Default
+        }
+
+        String normalized = retroStyle.trim().toLowerCase();
+
+        return switch (normalized) {
+            case "brief", "detailed", "full" -> normalized;
+            default -> "detailed"; // Safe fallback
+        };
+    }
+
+    /**
+     * Sanitize AI grading exigency level.
+     */
+    public String sanitizeExigencyLevel(String exigencyLevel) {
+        if (exigencyLevel == null || exigencyLevel.isEmpty()) {
+            return "moderated"; // Default
+        }
+
+        String normalized = exigencyLevel.trim().toLowerCase();
+
+        return switch (normalized) {
+            case "flexible", "moderated", "strict" -> normalized;
+            default -> "moderated"; // Safe fallback
+        };
+    }
+
+    /**
      * Sanitize bio text.
      *
      * APPROACH: Minimal sanitization, rely on validation.

@@ -56,5 +56,45 @@ public class UserProfile implements Serializable {
          * User's preferred theme (light/dark)
          */
         private String theme;
+
+        /**
+         * Notification when a student submits an activity.
+         */
+        private Boolean newSubmission;
+
+        /**
+         * Notification when a teacher grades your work.
+         */
+        private Boolean newGrading;
+
+        /**
+         * Notification one day before activity due date.
+         */
+        private Boolean submissionAlert;
+
+        /**
+         * Enable or disable email notifications.
+         */
+        private Boolean sendEmailNotification;
+
+        /**
+         * If true, AI can grade and provide feedback automatically on submission.
+         */
+        private Boolean agenticMode;
+
+        /**
+         * AI feedback detail style: brief, detailed, full.
+         */
+        private String retroStyle;
+
+        /**
+         * AI grading strictness level: flexible, moderated, strict.
+         */
+        private String exigencyLevel;
+
+        /**
+         * If true, AI generates weekly performance reports.
+         */
+        private Boolean weeklyReport;
     }
 }

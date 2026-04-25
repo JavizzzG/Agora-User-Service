@@ -234,6 +234,14 @@ public class UserService {
             if (profile.getConfig().getTheme() != null) {
                 profile.getConfig().setTheme(dataSanitizer.sanitizeTheme(profile.getConfig().getTheme()));
             }
+
+            if (profile.getConfig().getRetroStyle() != null) {
+                profile.getConfig().setRetroStyle(dataSanitizer.sanitizeRetroStyle(profile.getConfig().getRetroStyle()));
+            }
+
+            if (profile.getConfig().getExigencyLevel() != null) {
+                profile.getConfig().setExigencyLevel(dataSanitizer.sanitizeExigencyLevel(profile.getConfig().getExigencyLevel()));
+            }
         }
     }
 
