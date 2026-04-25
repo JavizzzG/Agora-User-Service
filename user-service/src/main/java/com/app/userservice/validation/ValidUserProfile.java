@@ -13,6 +13,8 @@ import java.lang.annotation.*;
  * - bio: Max 500 chars, no dangerous HTML
  * - phone: Must be in E.164 format (if present)
  * - config.theme: Must be one of: light, dark, auto
+ * - config.retroStyle: Must be one of: brief, detailed, full
+ * - config.exigencyLevel: Must be one of: flexible, moderated, strict
  *
  * WHY VALIDATE THE WHOLE OBJECT:
  * UserProfile is stored as JSONB, so we can't use individual @Valid on fields.

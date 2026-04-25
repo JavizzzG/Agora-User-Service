@@ -51,7 +51,17 @@ class ValidUserProfileValidatorTest {
         UserProfile profile = UserProfile.builder()
                 .avatarUrl("https://example.com/avatar.jpg")
                 .bio("Software engineer")
-                .config(UserProfile.UserConfig.builder().theme("dark").build())
+                .config(UserProfile.UserConfig.builder()
+                        .theme("dark")
+                        .newSubmission(true)
+                        .newGrading(true)
+                        .submissionAlert(true)
+                        .sendEmailNotification(true)
+                        .agenticMode(true)
+                        .retroStyle("detailed")
+                        .exigencyLevel("moderated")
+                        .weeklyReport(true)
+                        .build())
                 .build();
 
         assertThat(validator.isValid(profile, context)).isTrue();
@@ -126,5 +136,48 @@ class ValidUserProfileValidatorTest {
                 .build();
 
         assertThat(validator.isValid(profile, context)).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should reject unsupported retro style")
+    void isValid_ReturnsFalse_WhenRetroStyleIsInvalid() {
+        UserProfile profile = UserProfile.builder()
+                .config(UserProfile.UserConfig.builder().retroStyle("summary").build())
+                .build();
+
+        boolean valid = validator.isValid(profile, context);
+
+        assertThat(valid).isFalse();
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        verify(context).buildConstraintViolationWithTemplate(messageCaptor.capture());
+        assertThat(messageCaptor.getValue()).contains("Retro style must be one of");
+    }
+
+    @Test
+    @DisplayName("Should accept allowed retro style and exigency level case-insensitively")
+    void isValid_ReturnsTrue_WhenAiConfigValuesAreUppercaseButAllowed() {
+        UserProfile profile = UserProfile.builder()
+                .config(UserProfile.UserConfig.builder()
+                        .retroStyle("FULL")
+                        .exigencyLevel("STRICT")
+                        .build())
+                .build();
+
+        assertThat(validator.isValid(profile, context)).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should reject unsupported exigency level")
+    void isValid_ReturnsFalse_WhenExigencyLevelIsInvalid() {
+        UserProfile profile = UserProfile.builder()
+                .config(UserProfile.UserConfig.builder().exigencyLevel("hardcore").build())
+                .build();
+
+        boolean valid = validator.isValid(profile, context);
+
+        assertThat(valid).isFalse();
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        verify(context).buildConstraintViolationWithTemplate(messageCaptor.capture());
+        assertThat(messageCaptor.getValue()).contains("Exigency level must be one of");
     }
 }

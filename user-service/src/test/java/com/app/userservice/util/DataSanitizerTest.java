@@ -414,6 +414,70 @@ class DataSanitizerTest {
         assertThat(result).isNull();
     }
 
+    @Test
+    @DisplayName("Should sanitize retro style values")
+    void sanitizeRetroStyle_NormalizesRetroStyle() {
+        String[] inputs = {
+                "brief",
+                "BRIEF",
+                "Detailed",
+                "full",
+                "  FULL  ",
+                "invalid",
+                null,
+                ""
+        };
+
+        String[] expected = {
+                "brief",
+                "brief",
+                "detailed",
+                "full",
+                "full",
+                "detailed",
+                "detailed",
+                "detailed"
+        };
+
+        for (int i = 0; i < inputs.length; i++) {
+            assertThat(dataSanitizer.sanitizeRetroStyle(inputs[i]))
+                    .as("Input: %s", inputs[i])
+                    .isEqualTo(expected[i]);
+        }
+    }
+
+    @Test
+    @DisplayName("Should sanitize exigency level values")
+    void sanitizeExigencyLevel_NormalizesExigencyLevel() {
+        String[] inputs = {
+                "flexible",
+                "FLEXIBLE",
+                "Moderated",
+                "strict",
+                "  Strict  ",
+                "invalid",
+                null,
+                ""
+        };
+
+        String[] expected = {
+                "flexible",
+                "flexible",
+                "moderated",
+                "strict",
+                "strict",
+                "moderated",
+                "moderated",
+                "moderated"
+        };
+
+        for (int i = 0; i < inputs.length; i++) {
+            assertThat(dataSanitizer.sanitizeExigencyLevel(inputs[i]))
+                    .as("Input: %s", inputs[i])
+                    .isEqualTo(expected[i]);
+        }
+    }
+
     // ============================================================
     // SECURITY TESTS
     // ============================================================

@@ -144,7 +144,7 @@ public class CreateUserRequest {
      *
      * VALIDATION:
      * - Uses custom @ValidUserProfile validator
-     * - Validates: avatarUrl, bio, phone, config.theme
+     * - Validates: avatarUrl, bio, phone, config.theme, config.retroStyle, config.exigencyLevel
      * - All fields optional within profile
      *
      * SANITIZATION (in Service):
@@ -152,6 +152,7 @@ public class CreateUserRequest {
      * - Phone formatted to E.164
      * - Bio cleaned (optional: HTML sanitization)
      * - Theme normalized to lowercase
+     * - AI enum-like fields normalized to lowercase
      *
      * EXAMPLE:
      * {
