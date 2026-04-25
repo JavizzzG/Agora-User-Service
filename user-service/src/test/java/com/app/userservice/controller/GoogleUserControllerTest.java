@@ -35,7 +35,8 @@ class GoogleUserControllerTest {
     @Test
     @DisplayName("Should register Google user and return created UUID")
     void registerGoogleUser_Returns201_WithUuid() throws Exception {
-        GoogleCreateUserResponse createdId = new GoogleCreateUserResponse(UUID.randomUUID());
+        UUID createdUuid = UUID.randomUUID();
+        GoogleCreateUserResponse createdId = new GoogleCreateUserResponse(createdUuid);
         GoogleCreateUserRequest request = GoogleCreateUserRequest.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -50,7 +51,7 @@ class GoogleUserControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string("\"" + createdId + "\""));
+                .andExpect(jsonPath("$.id").value(createdUuid.toString()));
     }
 
     @Test

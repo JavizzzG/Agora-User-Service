@@ -67,6 +67,17 @@ class UserServiceTest {
                 .profile(UserProfile.builder()
                         .bio("Test bio")
                         .phone("+1234567890")
+                        .config(UserProfile.UserConfig.builder()
+                                .theme("dark")
+                                .newSubmission(true)
+                                .newGrading(false)
+                                .submissionAlert(true)
+                                .sendEmailNotification(true)
+                                .agenticMode(false)
+                                .retroStyle("detailed")
+                                .exigencyLevel("moderated")
+                                .weeklyReport(true)
+                                .build())
                         .build())
                 .build();
 
@@ -80,6 +91,17 @@ class UserServiceTest {
                 .profile(UserProfile.builder()
                         .bio("Test bio")
                         .phone("+1234567890")
+                        .config(UserProfile.UserConfig.builder()
+                                .theme("dark")
+                                .newSubmission(true)
+                                .newGrading(false)
+                                .submissionAlert(true)
+                                .sendEmailNotification(true)
+                                .agenticMode(false)
+                                .retroStyle("detailed")
+                                .exigencyLevel("moderated")
+                                .weeklyReport(true)
+                                .build())
                         .build())
                 .build();
 
@@ -91,6 +113,17 @@ class UserServiceTest {
                 .profile(UserProfile.builder()
                         .bio("Updated bio")
                         .phone("+0987654321")
+                        .config(UserProfile.UserConfig.builder()
+                                .theme("LIGHT")
+                                .newSubmission(false)
+                                .newGrading(true)
+                                .submissionAlert(false)
+                                .sendEmailNotification(false)
+                                .agenticMode(true)
+                                .retroStyle("FULL")
+                                .exigencyLevel("STRICT")
+                                .weeklyReport(false)
+                                .build())
                         .build())
                 .build();
 
@@ -100,6 +133,8 @@ class UserServiceTest {
         lenient().when(dataSanitizer.sanitizePhone(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
         lenient().when(dataSanitizer.sanitizeUrl(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
         lenient().when(dataSanitizer.sanitizeTheme(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
+        lenient().when(dataSanitizer.sanitizeRetroStyle(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
+        lenient().when(dataSanitizer.sanitizeExigencyLevel(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
     }
 
     @Test
@@ -334,6 +369,15 @@ class UserServiceTest {
         verify(dataSanitizer).sanitizeEmail("john.doe@example.com");
         verify(dataSanitizer).sanitizeBio("Test bio");
         verify(dataSanitizer).sanitizePhone("+1234567890");
+        verify(dataSanitizer).sanitizeTheme("dark");
+        verify(dataSanitizer).sanitizeRetroStyle("detailed");
+        verify(dataSanitizer).sanitizeExigencyLevel("moderated");
+        assertThat(createRequest.getProfile().getConfig().getNewSubmission()).isTrue();
+        assertThat(createRequest.getProfile().getConfig().getNewGrading()).isFalse();
+        assertThat(createRequest.getProfile().getConfig().getSubmissionAlert()).isTrue();
+        assertThat(createRequest.getProfile().getConfig().getSendEmailNotification()).isTrue();
+        assertThat(createRequest.getProfile().getConfig().getAgenticMode()).isFalse();
+        assertThat(createRequest.getProfile().getConfig().getWeeklyReport()).isTrue();
     }
 
     @Test
@@ -354,6 +398,15 @@ class UserServiceTest {
         verify(dataSanitizer).sanitizeEmail("jane.smith@example.com");
         verify(dataSanitizer).sanitizeBio("Updated bio");
         verify(dataSanitizer).sanitizePhone("+0987654321");
+        verify(dataSanitizer).sanitizeTheme("LIGHT");
+        verify(dataSanitizer).sanitizeRetroStyle("FULL");
+        verify(dataSanitizer).sanitizeExigencyLevel("STRICT");
+        assertThat(updateRequest.getProfile().getConfig().getNewSubmission()).isFalse();
+        assertThat(updateRequest.getProfile().getConfig().getNewGrading()).isTrue();
+        assertThat(updateRequest.getProfile().getConfig().getSubmissionAlert()).isFalse();
+        assertThat(updateRequest.getProfile().getConfig().getSendEmailNotification()).isFalse();
+        assertThat(updateRequest.getProfile().getConfig().getAgenticMode()).isTrue();
+        assertThat(updateRequest.getProfile().getConfig().getWeeklyReport()).isFalse();
     }
 
     private UserResponse createUserResponse() {
@@ -366,6 +419,17 @@ class UserServiceTest {
                 .profile(UserProfile.builder()
                         .bio("Test bio")
                         .phone("+1234567890")
+                        .config(UserProfile.UserConfig.builder()
+                                .theme("dark")
+                                .newSubmission(true)
+                                .newGrading(false)
+                                .submissionAlert(true)
+                                .sendEmailNotification(true)
+                                .agenticMode(false)
+                                .retroStyle("detailed")
+                                .exigencyLevel("moderated")
+                                .weeklyReport(true)
+                                .build())
                         .build())
                 .build();
     }

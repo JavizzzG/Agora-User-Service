@@ -3,6 +3,7 @@ package com.app.userservice.controller;
 import com.app.userservice.dto.CreateUserRequest;
 import com.app.userservice.dto.UpdateUserRequest;
 import com.app.userservice.dto.UserResponse;
+import com.app.userservice.model.UserProfile;
 import com.app.userservice.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -276,5 +277,59 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestWithLongName)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Should return 400 when create payload has invalid profile config values")
+    void createUser_Returns400_WhenProfileConfigIsInvalid() throws Exception {
+        CreateUserRequest invalidConfigRequest = CreateUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("password123")
+                .profile(UserProfile.builder()
+                        .config(UserProfile.UserConfig.builder()
+                                .theme("dark")
+                                .retroStyle("summary")
+                                .exigencyLevel("moderated")
+                                .build())
+                        .build())
+                .build();
+
+        mockMvc.perform(post("/users/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidConfigRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Should create user when payload includes all new profile config fields")
+    void createUser_Returns201_WhenProfileConfigContainsAllNewFields() throws Exception {
+        CreateUserRequest fullConfigRequest = CreateUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("password123")
+                .profile(UserProfile.builder()
+                        .config(UserProfile.UserConfig.builder()
+                                .theme("dark")
+                                .newSubmission(true)
+                                .newGrading(false)
+                                .submissionAlert(true)
+                                .sendEmailNotification(true)
+                                .agenticMode(false)
+                                .retroStyle("detailed")
+                                .exigencyLevel("moderated")
+                                .weeklyReport(true)
+                                .build())
+                        .build())
+                .build();
+
+        when(userService.createUser(any(CreateUserRequest.class))).thenReturn(testUserResponse);
+
+        mockMvc.perform(post("/users/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(fullConfigRequest)))
+                .andExpect(status().isCreated());
     }
 }
