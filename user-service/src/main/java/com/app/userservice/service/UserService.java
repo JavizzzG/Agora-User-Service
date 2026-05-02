@@ -2,6 +2,7 @@ package com.app.userservice.service;
 
 import com.app.userservice.client.AuthServiceClient;
 import com.app.userservice.dto.CreateUserRequest;
+import com.app.userservice.dto.InternalAiProfileResponse;
 import com.app.userservice.dto.UpdateUserRequest;
 import com.app.userservice.dto.UserResponse;
 import com.app.userservice.exception.DuplicateEmailException;
@@ -28,6 +29,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
+
+    private static final String DEFAULT_RETRO_STYLE = "detailed";
+    private static final String DEFAULT_EXIGENCY_LEVEL = "moderated";
     
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -80,6 +84,25 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         return userMapper.toResponse(user);
+    }
+
+    @Transactional(readOnly = true)
+    public InternalAiProfileResponse getInternalAiProfile(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        UserProfile.UserConfig config = user.getProfile() != null
+                ? user.getProfile().getConfig()
+                : null;
+
+        return InternalAiProfileResponse.builder()
+                .userId(user.getId())
+                .agenticMode(config != null && Boolean.TRUE.equals(config.getAgenticMode()))
+                .retroStyle(config != null && config.getRetroStyle() != null ? config.getRetroStyle() : DEFAULT_RETRO_STYLE)
+                .exigencyLevel(config != null && config.getExigencyLevel() != null ? config.getExigencyLevel() : DEFAULT_EXIGENCY_LEVEL)
+                .weeklyReport(config != null && Boolean.TRUE.equals(config.getWeeklyReport()))
+                .sendEmailNotification(config != null && Boolean.TRUE.equals(config.getSendEmailNotification()))
+                .build();
     }
     
     /**
