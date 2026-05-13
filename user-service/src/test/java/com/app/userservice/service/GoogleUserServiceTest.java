@@ -2,7 +2,6 @@ package com.app.userservice.service;
 
 import com.app.userservice.dto.GoogleCreateUserRequest;
 import com.app.userservice.dto.GoogleCreateUserResponse;
-import com.app.userservice.exception.DuplicateEmailException;
 import com.app.userservice.model.User;
 import com.app.userservice.repository.UserRepository;
 import com.app.userservice.util.DataSanitizer;
@@ -18,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -88,14 +86,23 @@ class GoogleUserServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw DuplicateEmailException when email already exists")
-    void createGoogleUser_ThrowsException_WhenEmailExists() {
+    @DisplayName("Should return existing UUID when email already exists")
+    void createGoogleUser_ReturnsExistingUuid_WhenEmailExists() {
+        UUID existingId = UUID.randomUUID();
+        User existingUser = User.builder()
+                .id(existingId)
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@gmail.com")
+                .build();
+
         when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(java.util.Optional.of(existingUser));
 
-        assertThatThrownBy(() -> googleUserService.createGoogleUser(request))
-                .isInstanceOf(DuplicateEmailException.class)
-                .hasMessageContaining(request.getEmail());
+        GoogleCreateUserResponse result = googleUserService.createGoogleUser(request);
 
+        assertThat(result.getId()).isEqualTo(existingId);
+        verify(userRepository).findByEmail(request.getEmail());
         verify(userRepository, never()).save(any(User.class));
     }
 }

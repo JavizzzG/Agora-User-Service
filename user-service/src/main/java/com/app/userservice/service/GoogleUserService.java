@@ -2,7 +2,6 @@ package com.app.userservice.service;
 
 import com.app.userservice.dto.GoogleCreateUserRequest;
 import com.app.userservice.dto.GoogleCreateUserResponse;
-import com.app.userservice.exception.DuplicateEmailException;
 import com.app.userservice.model.User;
 import com.app.userservice.model.UserProfile;
 import com.app.userservice.repository.UserRepository;
@@ -29,8 +28,10 @@ public class GoogleUserService {
         sanitizeRequest(request);
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            log.warn("Attempted to create Google user with duplicate email: {}", request.getEmail());
-            throw new DuplicateEmailException(request.getEmail());
+            log.info("Google user already exists with email: {}. Returning existing user id for OAuth link.", request.getEmail());
+            User existingUser = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new IllegalStateException("User exists by email but cannot be loaded: " + request.getEmail()));
+            return new GoogleCreateUserResponse(existingUser.getId());
         }
 
         User user = User.builder()

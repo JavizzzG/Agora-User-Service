@@ -51,7 +51,7 @@ class GoogleUserControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(createdUuid.toString()));
+                .andExpect(jsonPath("$.user_id").value(createdUuid.toString()));
     }
 
     @Test
