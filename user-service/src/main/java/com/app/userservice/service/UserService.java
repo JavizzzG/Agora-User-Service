@@ -2,6 +2,8 @@ package com.app.userservice.service;
 
 import com.app.userservice.client.AuthServiceClient;
 import com.app.userservice.dto.CreateUserRequest;
+import com.app.userservice.dto.InternalAiProfileResponse;
+import com.app.userservice.dto.InternalUserSummaryResponse;
 import com.app.userservice.dto.UpdateUserRequest;
 import com.app.userservice.dto.UserResponse;
 import com.app.userservice.exception.DuplicateEmailException;
@@ -17,8 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 /**
  * Service layer for user-related business logic.
@@ -28,6 +32,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
+
+    private static final String DEFAULT_RETRO_STYLE = "detailed";
+    private static final String DEFAULT_EXIGENCY_LEVEL = "moderated";
     
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -80,6 +87,25 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         return userMapper.toResponse(user);
+    }
+
+    @Transactional(readOnly = true)
+    public InternalAiProfileResponse getInternalAiProfile(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        UserProfile.UserConfig config = user.getProfile() != null
+                ? user.getProfile().getConfig()
+                : null;
+
+        return InternalAiProfileResponse.builder()
+                .userId(user.getId())
+                .agenticMode(config != null && Boolean.TRUE.equals(config.getAgenticMode()))
+                .retroStyle(config != null && config.getRetroStyle() != null ? config.getRetroStyle() : DEFAULT_RETRO_STYLE)
+                .exigencyLevel(config != null && config.getExigencyLevel() != null ? config.getExigencyLevel() : DEFAULT_EXIGENCY_LEVEL)
+                .weeklyReport(config != null && Boolean.TRUE.equals(config.getWeeklyReport()))
+                .sendEmailNotification(config != null && Boolean.TRUE.equals(config.getSendEmailNotification()))
+                .build();
     }
     
     /**
@@ -157,6 +183,53 @@ public class UserService {
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public List<InternalUserSummaryResponse> getInternalUserSummaries(List<UUID> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return List.of();
+        }
+
+        List<UUID> orderedDistinctIds = userIds.stream()
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+
+        if (orderedDistinctIds.isEmpty()) {
+            return List.of();
+        }
+
+        Map<UUID, User> usersById = userRepository.findAllById(orderedDistinctIds).stream()
+                .collect(java.util.stream.Collectors.toMap(User::getId, Function.identity()));
+
+        return orderedDistinctIds.stream()
+                .map(usersById::get)
+                .filter(Objects::nonNull)
+                .map(this::toInternalUserSummary)
+                .toList();
+    }
+
+    private InternalUserSummaryResponse toInternalUserSummary(User user) {
+        String firstName = user.getFirstName();
+        String lastName = user.getLastName();
+        String fullName = buildFullName(firstName, lastName);
+        String avatarUrl = user.getProfile() != null ? user.getProfile().getAvatarUrl() : null;
+
+        return InternalUserSummaryResponse.builder()
+                .id(user.getId())
+                .firstName(firstName)
+                .lastName(lastName)
+                .fullName(fullName)
+                .avatarUrl(avatarUrl)
+                .build();
+    }
+
+    private String buildFullName(String firstName, String lastName) {
+        String safeFirstName = firstName != null ? firstName.trim() : "";
+        String safeLastName = lastName != null ? lastName.trim() : "";
+        String fullName = (safeFirstName + " " + safeLastName).trim();
+        return fullName.isEmpty() ? null : fullName;
     }
 
 

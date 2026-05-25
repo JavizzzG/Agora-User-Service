@@ -2,6 +2,7 @@ package com.app.userservice.service;
 
 import com.app.userservice.client.AuthServiceClient;
 import com.app.userservice.dto.CreateUserRequest;
+import com.app.userservice.dto.InternalUserSummaryResponse;
 import com.app.userservice.dto.UpdateUserRequest;
 import com.app.userservice.dto.UserResponse;
 import com.app.userservice.exception.DuplicateEmailException;
@@ -19,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -349,6 +351,39 @@ class UserServiceTest {
         // Then
         assertThat(result).isTrue();
         verify(userRepository).existsByEmail(email);
+    }
+
+    @Test
+    @DisplayName("Should return ordered user summaries for internal batch request")
+    void getInternalUserSummaries_ReturnsOrderedSummaries() {
+        UUID secondUserId = UUID.randomUUID();
+        User secondUser = User.builder()
+                .id(secondUserId)
+                .firstName("Jane")
+                .lastName("Smith")
+                .email("jane.smith@example.com")
+                .profile(UserProfile.builder().avatarUrl("https://cdn/jane.png").build())
+                .build();
+
+        when(userRepository.findAllById(List.of(userId, secondUserId))).thenReturn(List.of(secondUser, testUser));
+
+        List<InternalUserSummaryResponse> result = userService.getInternalUserSummaries(List.of(userId, secondUserId, userId));
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getId()).isEqualTo(userId);
+        assertThat(result.get(0).getFullName()).isEqualTo("John Doe");
+        assertThat(result.get(1).getId()).isEqualTo(secondUserId);
+        assertThat(result.get(1).getAvatarUrl()).isEqualTo("https://cdn/jane.png");
+        verify(userRepository).findAllById(List.of(userId, secondUserId));
+    }
+
+    @Test
+    @DisplayName("Should return empty summaries when request list is empty")
+    void getInternalUserSummaries_ReturnsEmpty_WhenRequestIsEmpty() {
+        List<InternalUserSummaryResponse> result = userService.getInternalUserSummaries(List.of());
+
+        assertThat(result).isEmpty();
+        verify(userRepository, never()).findAllById(any());
     }
 
     @Test
