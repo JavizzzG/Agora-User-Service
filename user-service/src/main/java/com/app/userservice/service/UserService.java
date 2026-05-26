@@ -1,12 +1,14 @@
 package com.app.userservice.service;
 
 import com.app.userservice.client.AuthServiceClient;
+import com.app.userservice.client.NotificationClient;
 import com.app.userservice.dto.CreateUserRequest;
 import com.app.userservice.dto.InternalAiProfileResponse;
 import com.app.userservice.dto.InternalUserSummaryResponse;
 import com.app.userservice.dto.UpdateUserRequest;
 import com.app.userservice.dto.UserResponse;
 import com.app.userservice.exception.DuplicateEmailException;
+import com.app.userservice.exception.NotificationException;
 import com.app.userservice.exception.UserNotFoundException;
 import com.app.userservice.mapper.UserMapper;
 import com.app.userservice.model.User;
@@ -35,11 +37,13 @@ public class UserService {
 
     private static final String DEFAULT_RETRO_STYLE = "detailed";
     private static final String DEFAULT_EXIGENCY_LEVEL = "moderated";
-    
+
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final DataSanitizer dataSanitizer;
     private final AuthServiceClient authServiceClient;
+
+    private final NotificationClient notificationClient;
     
     /**
      * Create a new user
@@ -70,7 +74,13 @@ public class UserService {
         authServiceClient.registerCredentials(savedUser.getId(), savedUser.getEmail(), password, "password");
 
         log.info("Successfully created user with id: {}", savedUser.getId());
-        return userMapper.toResponse(savedUser);
+        try {
+            notificationClient.sendWelcome("agoradysai@gmail.com", savedUser.getFirstName());
+        } catch (NotificationException e) {
+            // Si el email falla, el usuario igual quedó registrado
+            log.warn("No se pudo enviar bienvenida: {}", e.getMessage());
+        }
+            return userMapper.toResponse(savedUser);
     }
 
     /**
