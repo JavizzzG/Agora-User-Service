@@ -325,6 +325,10 @@ public class UserService {
             if (profile.getConfig().getExigencyLevel() != null) {
                 profile.getConfig().setExigencyLevel(dataSanitizer.sanitizeExigencyLevel(profile.getConfig().getExigencyLevel()));
             }
+
+            if (profile.getConfig().getLanguage() != null) {
+                profile.getConfig().setLanguage(dataSanitizer.sanitizeLanguage(profile.getConfig().getLanguage()));
+            }
         }
     }
 

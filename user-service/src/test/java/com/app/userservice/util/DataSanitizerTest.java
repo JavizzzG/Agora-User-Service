@@ -447,6 +447,38 @@ class DataSanitizerTest {
     }
 
     @Test
+    @DisplayName("Should sanitize language values")
+    void sanitizeLanguage_NormalizesLanguage() {
+        String[] inputs = {
+                "en",
+                "EN",
+                "Es",
+                "  fr  ",
+                "es",
+                "invalid",
+                null,
+                ""
+        };
+
+        String[] expected = {
+                "en",
+                "en",
+                "es",
+                "fr",
+                "es",
+                "en",
+                "en",
+                "en"
+        };
+
+        for (int i = 0; i < inputs.length; i++) {
+            assertThat(dataSanitizer.sanitizeLanguage(inputs[i]))
+                    .as("Input: %s", inputs[i])
+                    .isEqualTo(expected[i]);
+        }
+    }
+
+    @Test
     @DisplayName("Should sanitize exigency level values")
     void sanitizeExigencyLevel_NormalizesExigencyLevel() {
         String[] inputs = {

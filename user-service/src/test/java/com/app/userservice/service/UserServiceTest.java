@@ -71,6 +71,7 @@ class UserServiceTest {
                         .phone("+1234567890")
                         .config(UserProfile.UserConfig.builder()
                                 .theme("dark")
+                                .language("es")
                                 .newSubmission(true)
                                 .newGrading(false)
                                 .submissionAlert(true)
@@ -95,6 +96,7 @@ class UserServiceTest {
                         .phone("+1234567890")
                         .config(UserProfile.UserConfig.builder()
                                 .theme("dark")
+                                .language("es")
                                 .newSubmission(true)
                                 .newGrading(false)
                                 .submissionAlert(true)
@@ -117,6 +119,7 @@ class UserServiceTest {
                         .phone("+0987654321")
                         .config(UserProfile.UserConfig.builder()
                                 .theme("LIGHT")
+                                .language("es")
                                 .newSubmission(false)
                                 .newGrading(true)
                                 .submissionAlert(false)
@@ -137,6 +140,7 @@ class UserServiceTest {
         lenient().when(dataSanitizer.sanitizeTheme(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
         lenient().when(dataSanitizer.sanitizeRetroStyle(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
         lenient().when(dataSanitizer.sanitizeExigencyLevel(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
+        lenient().when(dataSanitizer.sanitizeLanguage(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
     }
 
     @Test
@@ -405,6 +409,7 @@ class UserServiceTest {
         verify(dataSanitizer).sanitizeBio("Test bio");
         verify(dataSanitizer).sanitizePhone("+1234567890");
         verify(dataSanitizer).sanitizeTheme("dark");
+        verify(dataSanitizer).sanitizeLanguage("es");
         verify(dataSanitizer).sanitizeRetroStyle("detailed");
         verify(dataSanitizer).sanitizeExigencyLevel("moderated");
         assertThat(createRequest.getProfile().getConfig().getNewSubmission()).isTrue();
@@ -434,6 +439,7 @@ class UserServiceTest {
         verify(dataSanitizer).sanitizeBio("Updated bio");
         verify(dataSanitizer).sanitizePhone("+0987654321");
         verify(dataSanitizer).sanitizeTheme("LIGHT");
+        verify(dataSanitizer).sanitizeLanguage("es");
         verify(dataSanitizer).sanitizeRetroStyle("FULL");
         verify(dataSanitizer).sanitizeExigencyLevel("STRICT");
         assertThat(updateRequest.getProfile().getConfig().getNewSubmission()).isFalse();
@@ -456,6 +462,7 @@ class UserServiceTest {
                         .phone("+1234567890")
                         .config(UserProfile.UserConfig.builder()
                                 .theme("dark")
+                                .language("es")
                                 .newSubmission(true)
                                 .newGrading(false)
                                 .submissionAlert(true)

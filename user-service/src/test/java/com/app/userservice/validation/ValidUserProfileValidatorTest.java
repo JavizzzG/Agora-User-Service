@@ -180,4 +180,29 @@ class ValidUserProfileValidatorTest {
         verify(context).buildConstraintViolationWithTemplate(messageCaptor.capture());
         assertThat(messageCaptor.getValue()).contains("Exigency level must be one of");
     }
+
+    @Test
+    @DisplayName("Should reject unsupported language")
+    void isValid_ReturnsFalse_WhenLanguageIsInvalid() {
+        UserProfile profile = UserProfile.builder()
+                .config(UserProfile.UserConfig.builder().language("zh").build())
+                .build();
+
+        boolean valid = validator.isValid(profile, context);
+
+        assertThat(valid).isFalse();
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        verify(context).buildConstraintViolationWithTemplate(messageCaptor.capture());
+        assertThat(messageCaptor.getValue()).contains("Language must be one of");
+    }
+
+    @Test
+    @DisplayName("Should accept allowed languages case-insensitively")
+    void isValid_ReturnsTrue_WhenLanguageIsUppercaseButAllowed() {
+        UserProfile profile = UserProfile.builder()
+                .config(UserProfile.UserConfig.builder().language("EN").build())
+                .build();
+
+        assertThat(validator.isValid(profile, context)).isTrue();
+    }
 }
