@@ -436,6 +436,22 @@ public class DataSanitizer {
     }
 
     /**
+     * Sanitize language value.
+     */
+    public String sanitizeLanguage(String language) {
+        if (language == null || language.isEmpty()) {
+            return "en"; // Default
+        }
+
+        String normalized = language.trim().toLowerCase();
+
+        return switch (normalized) {
+            case "es", "en", "fr", "pt", "de", "it" -> normalized;
+            default -> "en"; // Safe fallback
+        };
+    }
+
+    /**
      * Sanitize bio text.
      *
      * APPROACH: Minimal sanitization, rely on validation.
