@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,15 +24,24 @@ public class GoogleUserService {
 
     @Transactional
     public GoogleCreateUserResponse createGoogleUser(GoogleCreateUserRequest request) {
-        log.info("Creating Google user with email: {}", request.getEmail());
+        log.info("Upserting Google user with email: {}", request.getEmail());
 
         sanitizeRequest(request);
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            log.info("Google user already exists with email: {}. Returning existing user id for OAuth link.", request.getEmail());
-            User existingUser = userRepository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new IllegalStateException("User exists by email but cannot be loaded: " + request.getEmail()));
-            return new GoogleCreateUserResponse(existingUser.getId());
+        Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            if (request.getAvatarUrl() != null) {
+                UserProfile profile = user.getProfile();
+                if (profile == null) {
+                    profile = UserProfile.builder().build();
+                }
+                profile.setAvatarUrl(request.getAvatarUrl());
+                user.setProfile(profile);
+                userRepository.save(user);
+                log.info("Updated existing Google user avatar, id: {}", user.getId());
+            }
+            return new GoogleCreateUserResponse(user.getId());
         }
 
         User user = User.builder()

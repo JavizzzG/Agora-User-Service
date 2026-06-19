@@ -32,6 +32,7 @@ public class ValidUserProfileValidator implements ConstraintValidator<ValidUserP
     private static final List<String> ALLOWED_THEMES = Arrays.asList("light", "dark", "auto");
     private static final List<String> ALLOWED_RETRO_STYLES = Arrays.asList("brief", "detailed", "full");
     private static final List<String> ALLOWED_EXIGENCY_LEVELS = Arrays.asList("flexible", "moderated", "strict");
+    private static final List<String> ALLOWED_LANGUAGES = Arrays.asList("es", "en", "fr", "pt", "de", "it");
 
     // Business rules
     private static final int MAX_BIO_LENGTH = 500;
@@ -201,6 +202,19 @@ public class ValidUserProfileValidator implements ConstraintValidator<ValidUserP
                                 "Exigency level must be one of: " + String.join(", ", ALLOWED_EXIGENCY_LEVELS)
                         )
                         .addPropertyNode("config.exigencyLevel")
+                        .addConstraintViolation();
+                isValid = false;
+            }
+        }
+
+        if (config.getLanguage() != null && !config.getLanguage().isEmpty()) {
+            String language = config.getLanguage().toLowerCase();
+
+            if (!ALLOWED_LANGUAGES.contains(language)) {
+                context.buildConstraintViolationWithTemplate(
+                                "Language must be one of: " + String.join(", ", ALLOWED_LANGUAGES)
+                        )
+                        .addPropertyNode("config.language")
                         .addConstraintViolation();
                 isValid = false;
             }

@@ -98,6 +98,13 @@
             <version>1.12.0</version>
         </dependency>
 
+        <!-- Resend Dependence - Para enviar email cuando alguien se registra-->
+        <dependency>
+            <groupId>com.resend</groupId>
+            <artifactId>resend-java</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
         <!-- Apache Commons Validator - Para validar URL, emails, etc. -->
         <dependency>
             <groupId>commons-validator</groupId>

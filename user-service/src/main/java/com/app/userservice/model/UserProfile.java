@@ -58,6 +58,11 @@ public class UserProfile implements Serializable {
         private String theme;
 
         /**
+         * User's preferred language
+         */
+        private String language;
+
+        /**
          * Notification when a student submits an activity.
          */
         private Boolean newSubmission;
