@@ -7,6 +7,7 @@ import com.app.userservice.dto.InternalAiProfileResponse;
 import com.app.userservice.dto.InternalUserSummaryResponse;
 import com.app.userservice.dto.UpdateUserRequest;
 import com.app.userservice.dto.UserResponse;
+import com.app.userservice.exception.AuthServiceException;
 import com.app.userservice.exception.DuplicateEmailException;
 import com.app.userservice.exception.NotificationException;
 import com.app.userservice.exception.UserNotFoundException;
@@ -71,7 +72,11 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         //Call auth service
-        authServiceClient.registerCredentials(savedUser.getId(), savedUser.getEmail(), password, "password");
+        try {
+            authServiceClient.registerCredentials(savedUser.getId(), savedUser.getEmail(), password, "password");
+        } catch (AuthServiceException e) {
+            log.warn("Auth registration failed for user {}: {}. User profile was already created.", savedUser.getEmail(), e.getMessage());
+        }
 
         log.info("Successfully created user with id: {}", savedUser.getId());
         try {
